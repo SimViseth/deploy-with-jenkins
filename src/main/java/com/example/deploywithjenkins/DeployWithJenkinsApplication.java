@@ -11,7 +11,7 @@ public class DeployWithJenkinsApplication {
 
     @GetMapping
     public String message() {
-        return "Hello !";
+        return "Hello Jenkins !";
     }
 
     public static void main(String[] args) {
