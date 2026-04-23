@@ -18,19 +18,11 @@ pipeline {
                 sh './gradlew clean build'
             }
         }
-        stage('Test Docker'){
-            steps{
-                script{
-                    docker.image('docker:24.0.5').inside {
-                        sh 'docker ps'
-                    }
-                }
-            }
-        }
+
         stage('Build Docker Image'){
             steps{
                 script{
-                    docker.image('docker:24.0.5').inside('--network host') {
+                    docker.image('docker:24.0.5').inside {
                         sh 'docker build -t viseth27/devops-integration .'
                     }
                 }
@@ -39,11 +31,13 @@ pipeline {
 
         stage('Push Image to Hub'){
             steps{
-                docker.image('docker:24.0.5').inside('--network host') {
-                    withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]) {
-                        sh 'docker login -u viseth27 -p ${dockerhubpwd}'
+                script{
+                    docker.image('docker:24.0.5').inside {
+                        withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]) {
+                            sh 'docker login -u viseth27 -p ${dockerhubpwd}'
+                        }
+                        sh 'docker push viseth27/devops-integration'
                     }
-                    sh 'docker push viseth27/devops-integration'
                 }
             }
         }
