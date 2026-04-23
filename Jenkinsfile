@@ -19,6 +19,16 @@ pipeline {
             }
         }
 
+        stage('Test Docker'){
+            steps{
+                script{
+                    docker.image('docker:24.0.5').inside {
+                        sh 'docker ps'
+                    }
+                }
+            }
+        }
+
         stage('Build Docker Image'){
             steps{
                 script{
