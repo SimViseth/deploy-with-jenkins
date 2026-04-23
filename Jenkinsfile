@@ -22,14 +22,16 @@ pipeline {
         stage('Build Docker Image'){
             steps{
                 script{
-                    sh 'docker build -t viseth27/devops-integration .'
+                    docker.image('docker:24.0.5').inside('--network host') {
+                        sh 'docker build -t viseth27/devops-integration .'
+                    }
                 }
             }
         }
 
         stage('Push Image to Hub'){
             steps{
-                script{
+                docker.image('docker:24.0.5').inside('--network host') {
                     withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]) {
                         sh 'docker login -u viseth27 -p ${dockerhubpwd}'
                     }
